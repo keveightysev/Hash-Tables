@@ -46,24 +46,9 @@ class HashTable:
 
     def insert(self, key, value):
         idx = self._hash_mod(key)
-        if self.storage[idx] is None:
-            self.storage[idx] = LinkedPair(key, value)
-            self.entries += 1
-        else:
-            current = self.storage[idx]
-            if current.key == key:
-                current.value = value
-                return
-            while current.next:
-                current = current.next
-                if current.key == key:
-                    current.value = value
-                    return
-            self.entries += 1
-            load = self.entries / self.capacity
-            if load > 0.7:
-                self.resize()
-            return
+        node = LinkedPair(key, value)
+        node.next = self.storage[idx]
+        self.storage[idx] = node
 
     def remove(self, key):
         '''
@@ -76,22 +61,15 @@ class HashTable:
         pass
 
     def retrieve(self, key):
-        '''
-        Retrieve the value stored with the given key.
-
-        Returns None if the key is not found.
-
-        Fill this in.
-        '''
-        pass
+        idx = self._hash_mod(key)
+        current = self.storage[idx]
+        while current:
+            if current.key == key:
+                return current.value
+            current = current.next
+        return None
 
     def resize(self):
-        '''
-        Doubles the capacity of the hash table and
-        rehash all key/value pairs.
-
-        Fill this in.
-        '''
         self.capacity *= 2
 
         new_table = HashTable(self.capacity)
