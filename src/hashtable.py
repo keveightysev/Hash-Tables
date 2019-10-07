@@ -19,6 +19,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.entries = 0
 
     def _hash(self, key):
         '''
@@ -44,14 +45,25 @@ class HashTable:
         return self._hash(key) % self.capacity
 
     def insert(self, key, value):
-        '''
-        Store the value with the given key.
-
-        Hash collisions should be handled with Linked List Chaining.
-
-        Fill this in.
-        '''
-        pass
+        idx = self._hash_mod(key)
+        if self.storage[idx] is None:
+            self.storage[idx] = LinkedPair(key, value)
+            self.entries += 1
+        else:
+            current = self.storage[idx]
+            if current.key == key:
+                current.value = value
+                return
+            while current.next:
+                current = current.next
+                if current.key == key:
+                    current.value = value
+                    return
+            self.entries += 1
+            load = self.entries / self.capacity
+            if load > 0.7:
+                self.resize()
+            return
 
     def remove(self, key):
         '''
