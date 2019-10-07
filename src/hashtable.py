@@ -51,14 +51,24 @@ class HashTable:
         self.storage[idx] = node
 
     def remove(self, key):
-        '''
-        Remove the value stored with the given key.
+        idx = self._hash_mod(key)
+        if self.storage[idx] is None:
+            return
 
-        Print a warning if the key is not found.
+        current = self.storage[idx]
+        if current.key == key:
+            self.storage[idx] = current.next
+            return
 
-        Fill this in.
-        '''
-        pass
+        previous = current
+        while current:
+            if current.key == key:
+                previous.next = current.next
+                return
+
+            else:
+                previous = current
+                current = current.next
 
     def retrieve(self, key):
         idx = self._hash_mod(key)
